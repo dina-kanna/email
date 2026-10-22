@@ -17,6 +17,10 @@ export default function App() {
     () => localStorage.getItem("mailflow-theme") === "dark"
   );
 
+const [isAuthenticated, setIsAuthenticated] = useState(
+  () => Boolean(sessionStorage.getItem("mailflow-demo-user"))
+);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     document.documentElement.style.colorScheme = darkMode
@@ -36,23 +40,59 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-white">
       <Routes>
+        {/* Open login first when the user is not authenticated */}
         <Route
           path="/"
           element={
-            <Inbox
-              darkMode={darkMode}
-              onThemeToggle={toggleTheme}
-            />
+            isAuthenticated ? (
+              <Inbox
+                darkMode={darkMode}
+                onThemeToggle={toggleTheme}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
 
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+  <Route
+  path="/login"
+  element={
+    isAuthenticated ? (
+      <Navigate to="/" replace />
+    ) : (
+      <Login onLogin={() => setIsAuthenticated(true)} />
+    )
+  }
+/>
+
+        <Route
+          path="/profile"
+          element={
+            isAuthenticated ? (
+              <Profile />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="/signup"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Signup />
+            )
+          }
+        />
+
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
         />
+
         <Route
           path="*"
           element={<Navigate to="/" replace />}

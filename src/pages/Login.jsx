@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 const DEMO_EMAIL = "demo@mailflow.com";
 const DEMO_PASSWORD = "Mailflow@123";
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -47,14 +47,19 @@ export default function Login() {
       normalizedEmail !== DEMO_EMAIL ||
       password !== DEMO_PASSWORD
     ) {
-      setError("Invalid demo email or password. Please use the displayed demo credentials.");
+      setError(
+        "Invalid demo email or password. Please use the displayed demo credentials."
+      );
       return;
     }
 
     setLoading(true);
 
     // Demo authentication only. No backend is connected.
-    sessionStorage.setItem("mailflow-demo-user", normalizedEmail);
+    sessionStorage.setItem(
+      "mailflow-demo-user",
+      normalizedEmail
+    );
 
     if (rememberMe) {
       localStorage.setItem("mailflow-demo-name", "Demo User");
@@ -62,6 +67,10 @@ export default function Login() {
       localStorage.removeItem("mailflow-demo-name");
     }
 
+    // Update authentication state in App.jsx.
+    onLogin?.();
+
+    // Navigate to the Inbox.
     navigate("/");
   }
 
@@ -73,7 +82,10 @@ export default function Login() {
         <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
         <div className="absolute -bottom-40 right-0 h-[32rem] w-[32rem] rounded-full bg-violet-500/20 blur-3xl" />
 
-        <Link to="/" className="relative z-10 flex w-fit items-center gap-3">
+        <Link
+          to="/"
+          className="relative z-10 flex w-fit items-center gap-3"
+        >
           <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur">
             <Mail size={23} />
           </span>
@@ -134,7 +146,10 @@ export default function Login() {
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
 
         <div className="relative w-full max-w-md">
-          <Link to="/" className="mb-10 flex w-fit items-center gap-2.5 lg:hidden">
+          <Link
+            to="/"
+            className="mb-10 flex w-fit items-center gap-2.5 lg:hidden"
+          >
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
               <Mail size={21} />
             </span>
@@ -210,7 +225,7 @@ export default function Login() {
                 <span className="text-xs text-slate-500 dark:text-slate-400">
                   Password
                 </span>
-                <span className="text-right text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <span className="break-all text-right text-xs font-semibold text-slate-800 dark:text-slate-200">
                   {DEMO_PASSWORD}
                 </span>
                 <button
@@ -315,7 +330,11 @@ export default function Login() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600 dark:hover:bg-slate-800"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
